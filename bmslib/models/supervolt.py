@@ -90,7 +90,8 @@ class SuperVoltBt(BtBms):
         data = bytes(":000250000E03~", "ascii")
         #handle = 0x0013
         #handle = 19
-        handle = self.UUID_TX
+        #handle = self.UUID_TX
+        handle = 0000ff01-0000-1000-8000-00805f9b34fb
         # 0x0013 -> 19 -> 6e400002-b5a3-f393-e0a9-e50e24dcca9e
         ret = await self.client.write_gatt_char(char_specifier=handle, data=data)
         # ret = self.device.writeCharacteristic(0x0013, data)
@@ -102,7 +103,8 @@ class SuperVoltBt(BtBms):
         data = bytes(":001031000E05~", "ascii")
         #handle = 0x0013
         #handle = 19
-        handle = self.UUID_TX
+        #handle = self.UUID_TX
+        handle = 0000ff01-0000-1000-8000-00805f9b34fb
         # 0x0013 -> 19 -> 6e400002-b5a3-f393-e0a9-e50e24dcca9e
         ret = await self.client.write_gatt_char(char_specifier=handle, data=data)
         if self.verbose_log:
