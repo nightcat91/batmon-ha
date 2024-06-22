@@ -1,5 +1,7 @@
 # Changelog
 
+## [1.792] - 2024-06-23
+* Changed RX and TX
 
 ## [1.791] - 2024-06-23
 * Tried other fixes for Supervolt
