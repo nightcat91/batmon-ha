@@ -233,4 +233,190 @@ class SuperVoltBt(BtBms):
 
                         start = end
                         end = start + 4
-                        self.chargeNumber = int(data[start: end
+                        self.chargeNumber = int(data[start: end```python
+                        end = start + 4
+                        self.chargeNumber = int(data[start: end].decode(), 16)
+                        if self.verbose_log:
+                            self.logger.debug(f"chargeNumber: {self.chargeNumber}")
+
+                        # State of Charge (%)
+                        start = end
+                        end = start + 2
+                        self.soc = int(data[start: end].decode(), 16)
+                        if self.verbose_log:
+                            self.logger.debug(f"soc: {self.soc}")
+                            self.logger.info("end of parse realtimedata")
+                            self.logger.debug(f"end code: {int(data[end:128-1].decode(), 16)}")
+
+                    else:
+                        self.logger.warning("no bytes")
+                elif len(data) == 30:
+                    if self.verbose_log:
+                        self.logger.debug("capacity")
+                    if type(data) is bytearray:
+                        data = bytes(data)
+                    if type(data) is bytes:
+                        start = 1
+                        end = start + 2
+                        self.address = int(data[start: end].decode(), 16)
+                        if self.verbose_log:
+                            self.logger.debug(f"address: {self.address}")
+
+                        start = end
+                        end = start + 2
+                        self.command = int(data[start: end].decode(), 16)
+                        if self.verbose_log:
+                            self.logger.debug(f"command: {self.command}")
+
+                        start = end
+                        end = start + 2
+                        self.version = int(data[start: end].decode(), 16)
+                        if self.verbose_log:
+                            self.logger.debug(f"version: {self.version}")
+
+                        start = end
+                        end = start + 4
+                        self.length = int(data[start: end].decode(), 16)
+                        if self.verbose_log:
+                            self.logger.debug(f"length: {self.length}")
+
+                        start = end
+                        end = start + 4
+                        breseved = data[start: end]
+                        if self.verbose_log:
+                            self.logger.debug(f"reseved: {breseved}")
+
+                        start = end
+                        end = start + 4
+                        self.remainingAh = int(data[start: end].decode(), 16) / 10.0
+                        if self.verbose_log:
+                            self.logger.debug(f"remainingAh: {self.remainingAh} / {data[start: end]}")
+
+                        start = end
+                        end = start + 4
+                        self.completeAh = int(data[start: end].decode(), 16) / 10.0
+                        if self.verbose_log:
+                            self.logger.debug(f"completeAh: {self.completeAh}")
+
+                        start = end
+                        end = start + 4
+                        self.designedAh = int(data[start: end].decode(), 16) / 10.0
+                        if self.verbose_log:
+                            self.logger.debug(f"designedAh: {self.designedAh}")
+                            self.logger.info("end of parse capacity")
+                            self.logger.debug(f"end code: {int(data[end:30-1].decode(), 16)}")
+                else:
+                    self.logger.warning(f"wrong length: {len(data)}")
+            else:
+                self.logger.debug("no data")
+        except Exception as e:
+            self.logger.error(f"Error in parseData: {e}", exc_info=True)
+
+    def getWorkingStateTextShort(self):
+        if self.workingState is None:
+            return "nicht erreichbar"
+        if self.workingState & 0xF003 >= 0xF000:
+            return "Normal"
+        if self.workingState & 0x000C > 0x0000:
+            return "Schutzschaltung"
+        if self.workingState & 0x0020 > 0:
+            return "Kurzschluss"
+        if self.workingState & 0x0500 > 0:
+            return "Überhitzt"
+        if self.workingState & 0x0A00 > 0:
+            return "Unterkühlt"
+        return "Unbekannt"
+
+    def getWorkingStateText(self):
+        text = ""
+        if self.workingState is None:
+            return "Unbekannt"
+        if self.workingState & 0x0001 > 0:
+            text = self.appendState(text, "Laden")
+        if self.workingState & 0x0002 > 0:
+            text = self.appendState(text, "Entladen")
+        if self.workingState & 0x0004 > 0:
+            text = self.appendState(text, "Überladungsschutz")
+        if self.workingState & 0x0008 > 0:
+            text = self.appendState(text, "Entladeschutz")
+        if self.workingState & 0x0010 > 0:
+            text = self.appendState(text, "Überladen")
+        if self.workingState & 0x0020 > 0:
+            text = self.appendState(text, "Kurzschluss")
+        if self.workingState & 0x0040 > 0:
+            text = self.appendState(text, "Entladeschutz 1")
+        if self.workingState & 0x0080 > 0:
+            text = self.appendState(text, "Entladeschutz 2")
+        if self.workingState & 0x0100 > 0:
+            text = self.appendState(text, "Überhitzt (Laden)")
+        if self.workingState & 0x0200 > 0:
+            text = self.appendState(text, "Unterkühlt (Laden)")
+        if self.workingState & 0x0400 > 0:
+            text = self.appendState(text, "Überhitzt (Entladen)")
+        if self.workingState & 0x0800 > 0:
+            text = self.appendState(text, "Unterkühlt (Entladen)")
+        if self.workingState & 0x1000 > 0:
+            text = self.appendState(text, "DFET an")
+        if self.workingState & 0x2000 > 0:
+            text = self.appendState(text, "CFET an")
+        if self.workingState & 0x4000 > 0:
+            text = self.appendState(text, "DFET Schalter an")
+        if self.workingState & 0x8000 > 0:
+            text = self.appendState(text, "CFET Schalter an")
+
+        return text
+
+    def appendState(self, text, append):
+        if text is None or len(text) == 0:
+            return append
+        return text + " | " + append
+
+    async def fetch(self) -> BmsSample:
+        await self.requestData()
+
+        sample = BmsSample(
+            voltage=self.totalV,
+            current=self.loadA,
+
+            soc=self.soc,
+
+            charge=self.remainingAh,
+            capacity=self.completeAh,
+
+            num_cycles=self.dischargeNumber,
+
+            temperatures=self.tempC[:self.num_temp],
+            mos_temperature=self.tempC[0],
+
+            switches=dict(
+                status_discharging=(self.workingState is not None and (self.workingState & 0x0002 > 0)),
+                status_charging=(self.workingState is not None and (self.workingState & 0x0001 > 0)),
+                status_normal=(self.workingState is not None and (self.workingState & 0xF003 >= 0xF000)),
+                status_protection=(self.workingState is not None and (self.workingState & 0x000C > 0)),
+                status_short=(self.workingState is not None and (self.workingState & 0x0020 > 0)),
+                status_overtemp=(self.workingState is not None and (self.workingState & 0x0500 > 0)),
+                status_undertemp=(self.workingState is not None and (self.workingState & 0x0A00 > 0)),
+                status_overvolt_protection=(self.workingState is not None and (self.workingState & 0x0004 > 0)),
+                status_undervolt_protection=(self.workingState is not None and (self.workingState & 0x0008 > 0))
+            )
+        )
+
+        self._switches = dict(sample.switches)
+
+        return sample
+
+    async def fetch_voltages(self):
+        return self.cellV[:self.num_cell]
+
+async def main():
+    mac_address = "84:28:D7:8F:XX:XX"  # Replace with your device's MAC address
+    bms = SuperVoltBt(mac_address, name='supervolt')
+    await bms.connect()
+    sample = await bms.fetch()
+    print(sample)
+    voltages = await bms.fetch_voltages()
+    print(voltages)
+    await bms.disconnect()
+
+if __name__ == '__main__':
+    asyncio.run(main())
