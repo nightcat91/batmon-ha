@@ -233,7 +233,7 @@ class SuperVoltBt(BtBms):
 
                         start = end
                         end = start + 4
-                        self.chargeNumber = int(data[start: end```python
+                        self.chargeNumber = int(data[start:end].decode(), 16)
                         end = start + 4
                         self.chargeNumber = int(data[start: end].decode(), 16)
                         if self.verbose_log:
