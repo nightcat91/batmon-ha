@@ -16,9 +16,11 @@ from bmslib.bt import BtBms
 
 
 class SuperVoltBt(BtBms):
-    UUID_RX = '0000ff02-0000-1000-8000-00805f9b34fb' # std uart TX (tx on device side, rx on host)
-    UUID_TX = '0000ff01-0000-1000-8000-00805f9b34fb' # std uart RX
-    TIMEOUT = 8
+#    UUID_RX = '0000ff02-0000-1000-8000-00805f9b34fb' # std uart TX (tx on device side, rx on host)
+#    UUID_TX = '0000ff01-0000-1000-8000-00805f9b34fb' # std uart RX
+    UUID_RX = '0000ff01-0000-1000-8000-00805f9b34fb'  # Read Characteristic UUID
+    UUID_TX = '0000ff02-0000-1000-8000-00805f9b34fb'  # Write Characteristic UUID
+   TIMEOUT = 8
     
 
     def __init__(self, address, **kwargs):
