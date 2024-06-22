@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.793] - 2024-06-23
+* Fixed indentation error
+
 ## [1.792] - 2024-06-23
 * Changed RX and TX
 
