@@ -1,7 +1,7 @@
 name: "Batmon"
 description: "Monitor various BMS over bluetooth - Nightcat Fork"
 url: https://github.com/nightcat91/batmon-ha
-version: "1.791"
+version: "1.792"
 slug: "batmon"
 init: false
 host_dbus: true
