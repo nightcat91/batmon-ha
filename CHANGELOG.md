@@ -1,5 +1,8 @@
 # Changelog
 
+
+## [1.80] - 2024-06-23
+* Tried other fixes for Supervolt
 ## [1.79] - 2024-06-14
 * Fix `Supervolt Identifier fix by Nightcat`
 
