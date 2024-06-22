@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.794] - 2024-06-23
+* New Code
+
 ## [1.793] - 2024-06-23
 * Fixed indentation error
 
