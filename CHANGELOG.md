@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.796] - 2024-06-23
+* New Code fixed
+
 ## [1.795] - 2024-06-23
 * New Code 2
 
